@@ -32,26 +32,31 @@ app.get('/api/', function (req, res) {
     res.json({unix: unixDate, utc: newDate});
 })
 
-app.get('/api/:date', function (req, res) {
-    const date = req.params.date
+app.get('/api/:date_string', function (req, res) {
+    const date = req.params.date_string;
     const splited = date.split('-');
     if(splited.length > 1) {
-        const unixDate = new Date(date).getTime();
-        const newDate = new Date(date).toUTCString();
-        if (newDate === "Invalid Date") {
-            res.json({error: newDate});
+        const dateObject = new Date(date);
+        if (dateObject.toUTCString() === "Invalid Date") {
+            res.json({error: "Invalid Date"});
         } else {
-            res.json({unix: unixDate, utc: newDate});
+            res.json({unix: dateObject.valueOf(), utc: dateObject.toUTCString()});
         }
     }
     else if (splited.length === 1) {
-        const intDate = parseInt(date);
-        const newDate = new Date(intDate).toUTCString();
-        if (newDate === "Invalid Date") {
-            res.json({error: newDate});
+        if(/[A-Za-z]/.test(date)) {
+            res.json({error: "Invalid Date"});
         } else {
-            res.json({unix: intDate, utc: newDate});
+            const intDate = parseInt(date);
+            const dateObject = new Date(intDate);
+            if (dateObject.toUTCString() === "Invalid Date") {
+                res.json({error: "Invalid Date"});
+            } else {
+                res.json({unix: intDate, utc: dateObject.toUTCString()});
+            }
         }
+    } else {
+        res.json({error: "Invalid Date"});
     }
 });
 
