@@ -47,7 +47,11 @@ app.get('/api/:date', function (req, res) {
     else if (splited.length === 1) {
         const intDate = parseInt(date);
         const newDate = new Date(intDate).toUTCString();
-        res.json({unix: intDate, utc: newDate});
+        if (newDate === "Invalid Date") {
+            res.json({error: newDate});
+        } else {
+            res.json({unix: intDate, utc: newDate});
+        }
     }
 });
 
